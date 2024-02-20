@@ -1,0 +1,15 @@
+git add "[What your pushing. * for all]"
+git status 
+  Confirms these are bing added and what is not
+
+git commit -m "comment"
+
+git push origin [where it is going. main for example]
+
+source: https://docs.gitlab.com/ee/tutorials/make_first_git_commit/
+
+
+
+ssh sources:https://docs.gitlab.com/ee/user/ssh.html
+
+Note: Must clone existing directory to add to it (For the first time only)

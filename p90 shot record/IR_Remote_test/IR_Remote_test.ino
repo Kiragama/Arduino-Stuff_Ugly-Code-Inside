@@ -45,8 +45,8 @@ void loop() {
      * Current Remote Key hex (missing the 0x ofc, e.g. 0x5E):
      */
     if (IrReceiver.decode()) {
-        //IrReceiver.printIRSendUsage(&Serial); //print whole results
-        //Serial.println(IrReceiver.decodedIRData.command, HEX); //print command in hex
+        IrReceiver.printIRSendUsage(&Serial); //print whole results
+        Serial.println(IrReceiver.decodedIRData.command, HEX); //print command in hex
         
         switch(IrReceiver.decodedIRData.command){
           case r_Up: //up

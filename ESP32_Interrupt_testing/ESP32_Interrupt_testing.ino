@@ -1,12 +1,14 @@
-const byte pin = 35;
-volatile int test = 0;
+const byte pin = 0;
+//#include <Adafruit_NeoPixel.h>
+int test = 0;
+RTC_DATA_ATTR unsigned long last_time;
 
-portMUX_TYPE synch = portMUX_INITIALIZER_UNLOCKED; //initialize interrupts
-
+/*#define NUMPIXELS        1
+Adafruit_NeoPixel pixels(NUMPIXELS, PIN_NEOPIXEL, NEO_GRB + NEO_KHZ800);*/
 //ICACHE_RAM_ATTR IS ESP8266
 //IRAM_ATTR PUT INTERRUPT INTO ram
 void IRAM_ATTR isr() {  //esp32 specific funtion for interrupts. arduino has set pins while esp can do any. Cannot be any output during interrupt and this includes Serial output
-   portENTER_CRITICAL(&synch); //must be at the start and used for syncing with program and other interrupts
+   
                         //Serial.println("bang");
                         //https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/
                         //wifi can cause some issues with interrupts
@@ -17,29 +19,36 @@ void IRAM_ATTR isr() {  //esp32 specific funtion for interrupts. arduino has set
 
   //The sleep functionality might help with above issue and allow for wifi as it doesn't happen on processor directly. Volatile variables are lost in sleep so use RTC_DATA_ATTR instead of volatile.
   //https://www.youtube.com/watch?v=CJhWlfkf-5M&pp=ygUKIzMyOCBlc3AzMg%3D%3D
-  test = 1;  //interrupts better for project as it gets around the issue with waiting for the cycle to reach the check command.
-portEXIT_CRITICAL(&synch); //must be at the end
+
+  if ((micros() > last_time+10))
+  {
+  test++;  //interrupts better for project as it gets around the issue with waiting for the cycle to reach the check command.
+  last_time = micros();
+  }
 }
 
 void setup() {
   // put your setup code here, to run once:
+  Serial.begin(9600);
   pinMode(pin, INPUT);
-  pinMode(6, OUTPUT);
-  //Serial.begin(9600);
-  attachInterrupt(digitalPinToInterrupt(pin), isr, CHANGE);
+/*
+   pixels.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)
+  pixels.setBrightness(20); // not so bright*/
+  //attachInterrupt(digitalPinToInterrupt(pin), isr, RISING);
+/*
+  pixels.fill(0x000000);
+   pixels.fill(0x00FF00);
+  pixels.show();*/
+
+  last_time = micros();
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  //Serial.println(test);
-  if (test == 1) {
-    digitalWrite(6, HIGH);
-/*
-    good alternative to delay that works with interrupts is:
-    lastEntry = millis();
-    while(millis() <lastEntry + 1000) //while the current time is 1 second after the last recording of it, trigger code
-    {
-      all delay code does here
-    }*/
+  Serial.println(test);
+  if (test == 10) {
+   /* pixels.fill(0x000000);
+    pixels.fill(0xFFC0CB);*/
+  //pixels.show();
   }
 }

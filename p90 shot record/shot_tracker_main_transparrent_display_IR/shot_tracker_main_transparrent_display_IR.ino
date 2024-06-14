@@ -8,14 +8,14 @@
 #include <IRremote.hpp>  // This include defines the actual pin number for pins like IR_RECEIVE_PIN, IR_SEND_PIN for many different boards and architectures
 #include <Arduino.h>
 #include <string.h>
-#include <avr/wdt.h>
+//#include <avr/wdt.h>
 
 #define SCREEN_WIDTH 128  // OLED display width, in pixels
 #define SCREEN_HEIGHT 64  // OLED display height, in pixels
 
-#define OLED_DC 9
-#define OLED_CS 10
-#define OLED_RESET -1
+#define OLED_DC 7
+#define OLED_CS 0
+#define OLED_RESET 5
 Adafruit_SSD1306 lcd_1(SCREEN_WIDTH, SCREEN_HEIGHT,
                        &SPI, OLED_DC, OLED_RESET, OLED_CS);
 
@@ -92,8 +92,8 @@ void setup() {
 //____________________________________
 
 void reboot() {
-  wdt_disable();
-  wdt_enable(WDTO_15MS);
+  //wdt_disable();
+  //wdt_enable(WDTO_15MS);
   while (1) {}
 }
 

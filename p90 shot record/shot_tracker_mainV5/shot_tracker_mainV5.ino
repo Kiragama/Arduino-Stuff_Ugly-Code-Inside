@@ -8,7 +8,7 @@
 #include <IRremote.hpp>  // This include defines the actual pin number for pins like IR_RECEIVE_PIN, IR_SEND_PIN for many different boards and architectures
 #include <Arduino.h>
 #include <string.h>
-#include <avr/wdt.h>
+
 #include <EEPROM.h>
 #include <math.h>
 

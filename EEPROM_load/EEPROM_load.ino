@@ -23,24 +23,26 @@
 ***/
 
 #include <EEPROM.h>
-
+#define EEPROM_SIZE 10 //bytes
 void setup() {
 
   int eeAddress = 0; //EEPROM address to start reading from
 
   Serial.begin(9600);
+  EEPROM.begin(EEPROM_SIZE);
+
 
   while (!Serial) {
-
+    digitalWrite(10, HIGH);
     ; // wait for serial port to connect. Needed for native USB port only
 
   }
 
   eeAddress = sizeof(float); //Move address to the next byte after float 'f'.
 
-  float test; //Variable to store custom object read from EEPROM.
+  float_t test = EEPROM.readFloat(eeAddress);; //Variable to store custom object read from EEPROM.
 
-  EEPROM.get(eeAddress, test); //data must be a float
+   //data must be a float
 
   Serial.println("Read custom object from EEPROM: ");
 

@@ -5,6 +5,8 @@ git status
 git commit -m "comment"
 
 git push origin [where it is going. main for example]
+e.g. git push
+e.g. git push main
 
 source: https://docs.gitlab.com/ee/tutorials/make_first_git_commit/
 

@@ -8,7 +8,7 @@
 #include <IRremote.hpp>  // This include defines the actual pin number for pins like IR_RECEIVE_PIN, IR_SEND_PIN for many different boards and architectures
 #include <Arduino.h>
 #include <string.h>
-#include <avr/wdt.h>
+//#include <avr/wdt.h>
 #include <EEPROM.h>
 #include <math.h>
 #include <Fonts/FreeSans9pt7b.h>
@@ -101,7 +101,7 @@ void setup() {  //https://electronoobs.com/eng_arduino_tut132.php - example but 
 
   PCICR |= (1 << PCIE0);    //enable PCMSK0 scan.
   PCMSK0 |= (1 << PCINT3);  //Set pin MISO to react to interrupts. https://medesign.seas.upenn.edu/index.php/Guides/MaEvArM-pcint
-  PCMSK0 |= (1 << PCINT7);  //ping 11
+  PCMSK0 |= (1 << PCINT7);  //pin 11 to also trigger the interupt
   DDRB &= B01110111;        //set only pin PB7 (D11) and PB3 (MISO) as input. Both these pins are on port B
   //other ways to do above
   //end of digitalPin Alternative Initialisation
@@ -390,8 +390,8 @@ void loop() {  //loop must always be cycling
 //https://electronoobs.com/eng_arduino_tut130.php - Port Register Control. Faster then digitalRead
 
 ISR(PCINT0_vect) {                                        //Pin change interrupt (no pin HIGH/LOW interrupt this fast on ATmega). Even though PCINT3 is being scanned. Only 0 will trigger. Any PCINTn will trigger this funtion. Can do do internal checks regarding this
-  if (PINB & B00001000 && (micros() > last_time + 10)) {  //Reading pin 3 (PB3) directly from port B, This should be the interupt pin PCINT3. Confirms which pin is in use at the moment
-
+  if (PINB & B00001000 && (micros() > last_time + 10)) {  //Reading pin 3 (PB3) directly from port B, This should also be the interupt pin PCINT3. Confirms which pin is in use at the moment
+    //not only will interupt be trigger but because of how fast this is, you can check if that same pin is HIGH/LOW (high in this case)
     if (box.ammo > 0)  //process for magazine counter. Simple process. Count and stop when mag capacity reached
     {
       box.ammo--;

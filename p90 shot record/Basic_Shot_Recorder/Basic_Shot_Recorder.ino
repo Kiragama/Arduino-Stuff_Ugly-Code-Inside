@@ -3,7 +3,7 @@ unsigned long last_time;
 void setup() {
   // put your setup code here, to run once:
 
-  pinMode(12, OUTPUT);
+  pinMode(0, OUTPUT);
   last_time = micros();
   //below is an interupt method that relies on interrupt pins on the processor. PCINT0 in this case, which goes to pin 8 on the nano and uno (same processor)
   //source:
@@ -29,7 +29,8 @@ ISR(PCINT0_vect) {         //pin change on PCINT0
     last_time = micros();
   }
   if (count == 10) {
-    digitalWrite(12, HIGH);
+    digitalWrite(0, HIGH);
+    Serial.println(test);
   }
 }  //This code works at low speed with IR, LED/LDRs but not at high speed. Created from a chrono project for a fucking coil gun so should be fast enough.
 

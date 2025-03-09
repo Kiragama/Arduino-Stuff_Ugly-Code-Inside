@@ -1,0 +1,4 @@
+hall effect sensors are sensitive to heat.
+
+
+Values to look for are clean numbers that react to turns. They will not reset on full turn, just increment

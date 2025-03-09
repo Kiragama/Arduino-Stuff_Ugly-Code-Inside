@@ -8,10 +8,20 @@
 #include "BLEDevice.h"
 //#include "BLEScan.h"
 
+/*#define SERVICE_UUID1 "6bc38e09-5e61-4838-8d1b-f3e093a2c5e6"  //server advertises and as long as client has the same UUID and Characteristic UUID. Plenty of security holes here
+#define CHARACTERISTIC_UUID1 "b3286334-8358-4b98-9111-2b3cef9758c9"*/
+#define SERVICE_UUID1 "5CDE0C3D-7B1D-4352-94BB-02269C9F42B5"  //server advertises and as long as client has the same UUID and Characteristic UUID. Plenty of security holes here
+#define CHARACTERISTIC_UUID1 "3337E46E-F79E-4FF5-9A49-77C36D170C62"
+
+
 // The remote service we wish to connect to.
-static BLEUUID serviceUUID("6bc38e09-5e61-4838-8d1b-f3e093a2c5e6");
+static BLEUUID serviceUUID(SERVICE_UUID1);
 // The characteristic of the remote service we are interested in.
-static BLEUUID charUUID("b3286334-8358-4b98-9111-2b3cef9758c9");
+static BLEUUID charUUID(CHARACTERISTIC_UUID1);
+
+//static BLEUUID serviceUUID("6bc38e09-5e61-4838-8d1b-f3e093a2c5e6");
+// The characteristic of the remote service we are interested in.
+//static BLEUUID charUUID("b3286334-8358-4b98-9111-2b3cef9758c9");
 
 static boolean doConnect = false;
 static boolean connected = false;

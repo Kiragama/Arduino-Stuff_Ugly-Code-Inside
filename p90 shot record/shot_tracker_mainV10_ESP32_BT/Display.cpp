@@ -57,9 +57,11 @@ void Display_Stuff::printAmount() {  //print current mag count
   if (getammo() <= 0) {
     printReload();
   } else {
-    setFont(&FreeSansBold24pt7b);
+    //setFont(&FreeSansBold24pt7b); //changed
     setTextSize(textSize);
-    loadTextNum(30, 80, getlastammo(), getammo());  //prints text and overwrites last text
+    setCursor(10, 10);
+    print(".");
+    loadTextNum(70, 40, getlastammo(), getammo());  //prints text and overwrites last text //changed 30, 80
     setlastammo(getammo());
 /*
     if ((getVoltage() > 0)) {

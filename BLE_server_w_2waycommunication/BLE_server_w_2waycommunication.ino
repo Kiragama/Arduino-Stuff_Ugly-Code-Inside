@@ -12,8 +12,16 @@
 //Start of BLE5
 // See the following for generating UUIDs:
 // https://www.uuidgenerator.net/
-#define SERVICE_UUID "6bc38e09-5e61-4838-8d1b-f3e093a2c5e6"  //server advertises and as long as client has the same UUID and Characteristic UUID. Plenty of security holes here
-#define CHARACTERISTIC_UUID "b3286334-8358-4b98-9111-2b3cef9758c9"
+/*#define SERVICE_UUID "6bc38e09-5e61-4838-8d1b-f3e093a2c5e6"  //server advertises and as long as client has the same UUID and Characteristic UUID. Plenty of security holes here
+#define CHARACTERISTIC_UUID "b3286334-8358-4b98-9111-2b3cef9758c9"*/
+//#define SERVICE_UUID "5CDE0C3D-7B1D-4352-94BB-02269C9F42B5"  //server advertises and as long as client has the same UUID and Characteristic UUID. Plenty of security holes here
+//#define CHARACTERISTIC_UUID "3337E46E-F79E-4FF5-9A49-77C36D170C62"
+//#define SERVICE_UUID "53C47FE1-6C22-4EA6-99C7-7B6325EC75B9"  //server advertises and as long as client has the same UUID and Characteristic UUID. Plenty of security holes here
+//#define CHARACTERISTIC_UUID "9C6AA1EE-B4B9-44A1-BA45-1558C9109B4C"
+//#define SERVICE_UUID "1D14D6EE-FD63-4FA1-BFA4-8F47B42119F0"  //server advertises and as long as client has the same UUID and Characteristic UUID. Plenty of security holes here
+//#define CHARACTERISTIC_UUID "F7BF3564-FB6D-4E53-88A4-5E37E0326063"
+#define SERVICE_UUID "0x1801"  //server advertises and as long as client has the same UUID and Characteristic UUID. Plenty of security holes here
+#define CHARACTERISTIC_UUID "00002A05-0000-1000-8000-00805F9B34FB"
 BLEServer* pServer = NULL;
 BLECharacteristic* pCharacteristic = NULL;
 BLEServerCallbacks* pServerCallbacks = NULL;

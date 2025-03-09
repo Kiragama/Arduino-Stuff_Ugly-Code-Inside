@@ -13,9 +13,9 @@
 
 class Display_Stuff : public DFRobot_ST7735_128x160_HW_SPI, public Resources_Base {
 protected:
-  const int8_t textSize = 2;
+  const int8_t textSize = 1; //changed
   const int16_t backColor = COLOR_RGB565_BLACK;
-  const int16_t textColor = COLOR_RGB565_MAGENTA;
+  const int16_t textColor = COLOR_RGB565_WHITE;
 
   const int batColor = 0x07E0;          //green in RGB565
   const float batMaxVolt = 4.2;         //9.80 is the max voltage of the NiMF bat

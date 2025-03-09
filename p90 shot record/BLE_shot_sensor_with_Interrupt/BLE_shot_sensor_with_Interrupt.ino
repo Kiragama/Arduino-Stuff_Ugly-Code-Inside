@@ -24,7 +24,7 @@ unsigned long last_time;
 void IRAM_ATTR isr() {                  //esp32 specific funtion for interrupts. arduino has set pins while esp can do any. Cannot be any output during interrupt and this includes Serial output
   if (micros() > (last_time + 120000))  //wait 100000 microseconds between shots
   {
-    Serial.println("tRIGGER");
+    //Serial.println("tRIGGER"); //This will slow the interrupt down alot and can cause missed shots
     count++;  //count increments so if multiple shots trigger before upload, it is still counted
     last_time = micros();
   }

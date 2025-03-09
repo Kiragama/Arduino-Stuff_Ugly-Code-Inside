@@ -13,7 +13,7 @@
 #include "ResourceSetup.h"
 #include "W_IR.h"
 
-const int16_t chkReload = 10;  //records reloads when this is HIGH
+const int16_t chkReload = 2;  //records reloads when this is HIGH
 
 unsigned long last_time;
 

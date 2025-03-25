@@ -7,7 +7,7 @@ void setSleepwakeup() {
 }
 
 void sleepLight(long last_time, uint32_t count) {  //reference back to update values
-  if (millis() > (last_time + (10 * mS_TO_S_FACTOR)))                      //if last time, in seconds, is greater then 2 minutes then sleep. Aka, if idle for 0 minutes then sleep. Deepsleep has too slow a startup to use.
+  if (millis() > (last_time + (SLEEPTIME * mS_TO_S_FACTOR)))                      //if last time, in seconds, is greater then 2 minutes then sleep. Aka, if idle for 0 minutes then sleep. Deepsleep has too slow a startup to use.
   {
     detachInterrupt(digitalPinToInterrupt(PIN));
     
@@ -22,7 +22,7 @@ void sleepLight(long last_time, uint32_t count) {  //reference back to update va
     last_time = millis();  //sets last time to ensure that it gets set. I know it is set during isr
 
     pClient->disconnect(); //disconnecting before sleep wakes device. Device will be disconnected from server regardless.
-    attachInterrupt(digitalPinToInterrupt(PIN), isr, RISING);
+    attachI();
   }
 }
   //_______________________________________________________________________________End of Sleep

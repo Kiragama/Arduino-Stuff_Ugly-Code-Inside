@@ -193,8 +193,9 @@ bool connectToServer() {
         #endif
         return false;
     }
-
-    //Serial.println("Done with this device!");
+    #ifdef _DEBUG
+    Serial.println("Done with this device!");
+    #endif
     doConnect = false;
     return true;
 }
@@ -225,8 +226,8 @@ void setup (){
     //pScan->setDuplicateFilter(false);
     //pScan->setMaxResults(0);
     /** Set scan interval (how often) and window (how long) in milliseconds */
-    pScan->setInterval(45);
-    pScan->setWindow(15);
+    pScan->setInterval(30); //45
+    pScan->setWindow(15); //15
 
     /** Active scan will gather scan response data from advertisers
      *  but will use more energy from both devices

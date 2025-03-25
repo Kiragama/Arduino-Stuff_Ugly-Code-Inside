@@ -1,5 +1,3 @@
-#include "Defines.h"
-
 void disable_wifi() {               //CHATGPT CREATED
   esp_err_t err = esp_wifi_stop();  // Stop Wi-Fi
   if (err == ESP_OK) {

@@ -10,6 +10,7 @@ static BLEClient* pClient;  //initialise global before Sleepstuff included allow
 #include "SleepStuff.h"
 #include "disableWifi.h"
 
+
 TaskHandle_t TaskHandle;
 
 //_______________________________________________________________________________Start of BLE5
@@ -22,10 +23,10 @@ bool connectToServer() {
   Serial.println(" - Created client");
   delay(delayVal);
   if (notFound) {
-    attachInterrupt(digitalPinToInterrupt(PIN), isr, RISING);
+    attachI();
     return false;
   }
-  attachInterrupt(digitalPinToInterrupt(PIN), isr, RISING); //first part runs with disabled interrupt to ensure no crashing/connection issues
+  attachI(); //first part runs with disabled interrupt to ensure no crashing/connection issues
   pClient->setClientCallbacks(new MyClientCallback());
   // Connect to the remove BLE Server.
   pClient->connect(myDevice);
@@ -79,7 +80,7 @@ void setup() {
   disable_wifi();
   pinMode(PIN, INPUT_PULLDOWN);
   //gpio_deep_sleep_hold_en();                                 //hold the pinmode during sleep
-  attachInterrupt(digitalPinToInterrupt(PIN), isr, RISING);  //normal operation interrupt
+  attachI();
   last_time = millis();                                      //Initial setup of the time
 
   //_______________________________________________________________________________START OF BLE5

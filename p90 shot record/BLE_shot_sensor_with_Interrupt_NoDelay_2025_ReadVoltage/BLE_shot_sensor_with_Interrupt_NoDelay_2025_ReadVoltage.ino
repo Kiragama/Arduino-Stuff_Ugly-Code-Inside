@@ -11,7 +11,7 @@ static BLEUUID charUUID("b3286334-8358-4b98-9111-2b3cef9758c9");
 
 static boolean doConnect = false;
 static boolean connected = false;
-static boolean doScan = true;
+static boolean doScan = false;
 static BLERemoteCharacteristic* pRemoteCharacteristic;
 static BLEAdvertisedDevice* myDevice;
 
@@ -34,7 +34,7 @@ void disable_wifi() {               //CHATGPT CREATED
 
 
 //_______________________________________________________________________________Interrupt
-static byte pin = 0;          //GPIO 0
+static byte pin = 18;          //GPIO 0
 RTC_DATA_ATTR int count = 0;  //binds it to RTC so does not clear in sleep
 unsigned long last_time;
 
@@ -42,6 +42,7 @@ void IRAM_ATTR isr() {  //esp32 specific funtion for interrupts. arduino has set
   if (millis() > (last_time + 0.224)) {
     count++;  //count increments so if multiple shots trigger before upload, it is still counted
     last_time = millis();
+    Serial.println(analogRead(pin))
   }
 }  // NO SERIAL!!!!!!!!!!!!
 //_______________________________________________________________________________Interrupt end

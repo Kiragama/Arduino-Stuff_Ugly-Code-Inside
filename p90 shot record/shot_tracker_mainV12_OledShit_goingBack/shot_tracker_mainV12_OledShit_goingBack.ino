@@ -35,7 +35,7 @@ BLEServerCallbacks* pServerCallbacks = NULL;
 bool deviceConnected = false;
 bool once = true;
 void tickDown(int count) {
-  for (int i = 0; i <= count; i++) {
+  for (int i = 0; i < count; i++) {
     inoDisplay.setammo(inoDisplay.getammo() - 1);  //reduce ammo by one per count
     //Remember, it transmits in batches and not per shot.
     inoDisplay.printAmount();
@@ -116,7 +116,7 @@ void setup() {
   BLEService* pService = pServer->createService(SERVICE_UUID);
   pCharacteristic = pService->createCharacteristic(CHARACTERISTIC_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
 
-  pCharacteristic->setValue("Hello World says Neil");
+  pCharacteristic->setValue("Neil says Hi");
   pService->start();
   BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
   pAdvertising->addServiceUUID(SERVICE_UUID);

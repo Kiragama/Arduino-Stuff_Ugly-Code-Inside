@@ -76,7 +76,7 @@ void doConnectPass(void* pvParameters) {  //*pvParameters is a pointer from the 
 void setup() {
   Serial.begin(115200);  //comment this on final
   delay(1000);           //allow serial to establish.  Debug only
-  disable_wifi();
+  //disable_wifi();
   pinMode(PIN, INPUT_PULLDOWN);
   //gpio_deep_sleep_hold_en();                                 //hold the pinmode during sleep
   attachInterrupt(digitalPinToInterrupt(PIN), isr, RISING);  //normal operation interrupt
@@ -133,12 +133,12 @@ void loop() {
     value = "";
     loopcount = 0;
     //}
-    sleepLight(last_time, count);
+    //sleepLight(last_time, count);
   } else if (doScan) {  //if other core is not activily connecting and scanning enabled
     if (scancount >= 5) {
       scancount = 0;  //catch so if no server, it goes to sleep after 5 attempts.
       loopcount = 0;
-      sleepLight(last_time, count);
+      //sleepLight(last_time, count);
       //ESP.restart();  //Restart device. Loses the stored value but allow for more reliable reconnect to the Py shot tracker.
     } else {
       doConnect = true;

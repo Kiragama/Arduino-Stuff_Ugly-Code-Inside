@@ -1,15 +1,10 @@
 #include "BLEDevice.h"  //ArduinoBLE version 1.3.1 or below Required
 #include <string.h>
 #include "Defines.h"
+#include "InterruptsFile.h"
 
 //_______________________________________________________________________________Interrupt
-void IRAM_ATTR isr() {                //esp32 specific funtion for interrupts. arduino has set pins while esp can do any. Cannot be any output during interrupt and this includes Serial output
-  if (millis() > (last_time + 0.224) && last_time != 7)  //4.24 wait | EXAMPLE: 1 millisecond between shots. At 350 FPS, the bb will travel 106mm in a millisecond. (350/1000 (1000  nds in a second) = 0.35 feet. 0.35 is 106mm)
-  {
-    count +=1;  //count increments so if multiple shots trigger before upload, it is still counted
-    last_time = millis();
-  } //Interrupt that is held will constantly trigger. Even on rising
-}  // NO SERIAL!!!!!!!!!!!!
+
 //_______________________________________________________________________________Interrupt end
 
 // The remote service we wish to connect to. Both should be on the client and server. THIS IS THE CLIENT
@@ -25,7 +20,7 @@ static boolean doScan = true;
 
 class MyClientCallback : public BLEClientCallbacks {  //Triggers corresponding function when connection or disconnection
   void onConnect(BLEClient* pclient) {
-    attachInterrupt(digitalPinToInterrupt(PIN), isr, RISING);  //enable input
+    attachI();
   }
   void onDisconnect(BLEClient* pclient) {
     connected = false;

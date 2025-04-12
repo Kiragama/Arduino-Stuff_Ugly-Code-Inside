@@ -1,17 +1,18 @@
+Does not work as bluetooth normally operates on core 0. It gets in the way of the loop. Mutex does not work as bluetooth not controlled by me.
 #include <driver/rtc_io.h>
 #include "BLEDevice.h"  //ArduinoBLE version 1.3.1 or below Required
 #include <driver/gpio.h>
 #include <string.h>
-#include <Arduino.h>        //for multicore
-#include "esp_wifi.h"       //to disable wifi
+#include <Arduino.h>  //for multicore
+
 static BLEClient* pClient;  //initialise global before Sleepstuff included allows for that file to access it.
 
 #include "BLEClasses.h"
 #include "SleepStuff.h"
 #include "disableWifi.h"
 
-
 TaskHandle_t TaskHandle;
+SemaphoreHandle_t mySemaphore;
 
 //_______________________________________________________________________________Start of BLE5
 
@@ -23,14 +24,13 @@ bool connectToServer() {
   Serial.println(" - Created client");
   delay(delayVal);
   if (notFound) {
-    attachI();
     return false;
   }
-  attachI(); //first part runs with disabled interrupt to ensure no crashing/connection issues
   pClient->setClientCallbacks(new MyClientCallback());
   // Connect to the remove BLE Server.
-  pClient->connect(myDevice);
-    // if you pass BLEAdvertisedDevice instead of address, it will be recognized type of peer device address (public or private)
+  Serial.println(" - Connecting to server");
+  pClient->connect(myDevice);  //BREAKS HERE
+  // if you pass BLEAdvertisedDevice instead of address, it will be recognized type of peer device address (public or private)
   Serial.println(" - Connected to server");
   delay(delayVal);
   pClient->setMTU(517);  //set client to request maximum MTU from server (default is 23 otherwise)
@@ -63,25 +63,34 @@ bool connectToServer() {
   return true;
 }
 
-void doConnectPass(void* pvParameters) {  //*pvParameters is a pointer from the involved class. Passed Parameters to task
-  //Serial.println("Task running on core: " + String(xPortGetCoreID()));  //debug
+void doConnectPass() {  //*pvParameters is a pointer from the involved class. Passed Parameters to task
+  setCore(false);
   if (connectToServer()) {
     Serial.println("We are now connected to the BLE Server.");
+    //setCore(true);
   } else {
     Serial.println("Failed to connect to the server.");
     doScan = true;  //allows scans again
+    //setCore(true);
   }
-  vTaskDelete(NULL);  //delete the task to cleanup. Passing NULL deletes itself
 }
+
+
+
+
+
+
+
+
+
 
 void setup() {
   Serial.begin(115200);  //comment this on final
   delay(1000);           //allow serial to establish.  Debug only
-  disable_wifi();
+  //disable_wifi(); //does not work on nanoPi
   pinMode(PIN, INPUT_PULLDOWN);
   //gpio_deep_sleep_hold_en();                                 //hold the pinmode during sleep
-  attachI();
-  last_time = millis();                                      //Initial setup of the time
+  last_time = millis();  //Initial setup of the time
 
   //_______________________________________________________________________________START OF BLE5
   //Serial.println("Starting Arduino BLE Client application...");
@@ -96,7 +105,53 @@ void setup() {
   pBLEScan->setActiveScan(true);
   pBLEScan->start(5, false);
   //_______________________________________________________________________________END OF BLE5
+  mySemaphore = xSemaphoreCreateBinary();
+  xSemaphoreGive(mySemaphore);  // Initialize semaphore
 }
+
+void setCore(bool state) {
+
+
+  if (state) {
+    xTaskCreatePinnedToCore(  //setup/Call task //DISABLED FOR DEBUG OF BOOT LOOPS. This causes it
+      connectLoop,            // Task function
+      "readLoop",             // Task name
+      10000,                  // Stack size
+      NULL,                   // Parameters
+      tskIDLE_PRIORITY,       // Priority
+      &TaskHandle,            // Task handle. Can be null if do not plan to remove.
+      0                       // Core ID (0 or 1). Core 0 handles bluetoth/wifi/RTOS internals. | Core one is normal
+    );
+  } else {
+    vTaskDelete(TaskHandle);  //using NULL deletes current task and use handle for everything else.
+  }
+}
+
+float calcVolt() {
+  float in = analogRead(PIN);
+  float refVolt = 3.3;
+  float adc = 4095;
+
+  float result = (in / adc) * refVolt;
+  return result;
+}
+
+void connectLoop(void* pvParameters) {
+  while (1) {
+    if (xSemaphoreTake(mySemaphore, portMAX_DELAY)) {
+      //instead of interrupts, the reading is passed to another core. Should reduce read delays.
+      //Reasoning: if a pin remains high (touch does not count) then it will not trigger again until that pin drains. The tracer remains above the trigger threshold if shots are too close to eachother. Because interrupt is triggerred the once, shots are missed.
+      //Serial.println("Task running on core: " + String(xPortGetCoreID()));  //debug
+      if (calcVolt() > 2.0 && millis() > (last_time + INTERRUPTDELAYFACTOR)) {
+        count += 1;
+        last_time = millis();
+      }
+      xSemaphoreGive(mySemaphore);
+    }
+  }
+}
+
+
 
 void loop() {
   //Serial.print("Passive count is ");
@@ -107,19 +162,10 @@ void loop() {
   // If the flag "doConnect" is true then we have scanned for and found the desired BLE Server with which we wish to connect.  Now we connect to it.  Once we are connected we set the connected flag to be true.
   //Create Task handle for assigning core 0 a task
   if (doConnect == true) {
-    detachInterrupt(digitalPinToInterrupt(PIN));  //interrupts during connection causes it to reset
-    doConnect = false;                            //sets do connect to false until the doscan operates
+    doConnect = false;  //sets do connect to false until the doscan operates
     //Serial.println("doconnect false");
-    doScan = false;           //stops scans while connecting.
-    xTaskCreatePinnedToCore(  //setup/Call task
-      doConnectPass,          // Task function
-      "ConnectToServer",      // Task name
-      10000,                  // Stack size
-      NULL,                   // Parameters
-      tskIDLE_PRIORITY,       // Priority
-      &TaskHandle,            // Task handle
-      0                       // Core ID (0 or 1) | Core 0 normally handles internal code, bluetooth, and wifi. Core 1 is normal program. Assigning bluetooth to 0 is fine but running BT on core 1, while using core 0 caused deadlock.
-    );
+    doScan = false;  //stops scans while connecting.
+    doConnectPass();
     //attaching interrupt here does nothing. Must attach in function
   }
   //_______________________________________________________________________________ End of connect to server
@@ -139,7 +185,7 @@ void loop() {
     if (scancount >= 5) {
       scancount = 0;  //catch so if no server, it goes to sleep after 5 attempts.
       loopcount = 0;
-      sleepLight((last_time + (SLEEPTIME * mS_TO_S_FACTOR), count);
+      sleepLight(last_time, count);
       //ESP.restart();  //Restart device. Loses the stored value but allow for more reliable reconnect to the Py shot tracker.
     } else {
       doConnect = true;

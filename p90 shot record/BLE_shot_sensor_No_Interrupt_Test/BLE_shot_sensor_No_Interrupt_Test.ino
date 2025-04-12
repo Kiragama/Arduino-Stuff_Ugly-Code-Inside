@@ -1,8 +1,16 @@
+#DOES NOT WORK
+
+
+
+
+
+
+
 #include <driver/rtc_io.h>
 #include "BLEDevice.h"
 #include <driver/gpio.h>
 #include <string.h>
-
+#include <Arduino.h>        //for multicore
 
 // The remote service we wish to connect to. Both should be on the client and server. THIS IS THE CLIENT
 static BLEUUID serviceUUID("6bc38e09-5e61-4838-8d1b-f3e093a2c5e6");
@@ -15,8 +23,11 @@ static boolean doScan = true;
 static BLERemoteCharacteristic* pRemoteCharacteristic;
 static BLEAdvertisedDevice* myDevice;
 
+#define INTERRUPTDELAYFACTOR 0.224
+TaskHandle_t TaskHandle;
+
 //_______________________________________________________________________________Interrupt
-static byte pin = 0;  //GPIO 0
+static byte pin = 18;  //GPIO 0
 RTC_DATA_ATTR int count = 0;
 unsigned long last_time;
 
@@ -163,7 +174,40 @@ void setup() {
   pBLEScan->setActiveScan(true);
   pBLEScan->start(5, false);
   //_______________________________________________________________________________END OF BLE5
+
+   xTaskCreatePinnedToCore(  //setup/Call task //DISABLED FOR DEBUG OF BOOT LOOPS. This causes it
+    connectLoop,            // Task function
+    "readLoop",             // Task name
+    100000,                  // Stack size
+    NULL,                   // Parameters
+    tskIDLE_PRIORITY,       // Priority
+    &TaskHandle,            // Task handle
+    0                       // Core ID (0 or 1)
+  );
+
+
 }
+
+float calcVolt(){
+  float in = analogRead(pin);
+  float refVolt = 3.3;
+  float adc = 4095;
+
+  float result = (in/adc) * refVolt;
+  return result;
+}
+
+void connectLoop(void* pvParameters) {
+  //instead of interrupts, the reading is passed to another core. Should reduce read delays.
+  //Reasoning: if a pin remains high (touch does not count) then it will not trigger again until that pin drains. The tracer remains above the trigger threshold if shots are too close to eachother. Because interrupt is triggerred the once, shots are missed.
+  //Serial.println("Task running on core: " + String(xPortGetCoreID()));  //debug
+  if (calcVolt() > 2.0 && millis() > (last_time + INTERRUPTDELAYFACTOR)) {
+    count += 1;
+    last_time = millis();
+  }
+}
+
+
 
 void loop() {
 

@@ -20,7 +20,7 @@ static boolean doScan = true;
 
 TaskHandle_t TaskHandle;
 //_______________________________________________________________________________Interrupt
-#define PIN 35                              //mosi
+#define PIN 18                              //mosi
 RTC_DATA_ATTR volatile uint32_t count = 0;  //volatile stops the compiler from assuming the value and actually check. Required if interrupts used
 #define uS_TO_S_FACTOR 1000000ULL           //Conversion factor for microseconds seconds to seconds. Used by Sleep timer
 #define mS_TO_S_FACTOR 1000ULL
@@ -198,7 +198,7 @@ void setup() {
 }
 
 void loop() {
-  bool sleepQ = sleepLight();
+  //bool sleepQ = sleepLight();
   //_______________________________________________________________________________ connect to server
   // If the flag "doConnect" is true then we have scanned for and found the desired BLE Server with which we wish to connect.  Now we connect to it.  Once we are connected we set the connected flag to be true.
   //Create Task handle for assigning core 0 a task

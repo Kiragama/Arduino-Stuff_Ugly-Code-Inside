@@ -1,6 +1,6 @@
 #include "BLEDevice.h"  //ArduinoBLE version 1.3.1 or below Required
 #include <string.h>
-#include "Defines.h"
+
 #include "InterruptsFile.h"
 
 //_______________________________________________________________________________Interrupt
@@ -25,6 +25,7 @@ class MyClientCallback : public BLEClientCallbacks {  //Triggers corresponding f
   void onDisconnect(BLEClient* pclient) {
     connected = false;
     Serial.println("onDisconnect");
+    Serial.flush();
   }
 };
 
@@ -39,19 +40,12 @@ static void notifyCallback(
 class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
   //Called for each advertising BLE server.
   void onResult(BLEAdvertisedDevice advertisedDevice) {
-    //Serial.print("BLE Advertised Device found: ");
-    //Serial.println(advertisedDevice.toString().c_str());
 
-    // We have found a device, let us now see if it contains the service we are looking for. Ideal if device name varies
-    /*if (advertisedDevice.haveServiceUUID() && advertisedDevice.isAdvertisingService(serviceUUID)) {
-
-      BLEDevice::getScan()->stop();
-      myDevice = new BLEAdvertisedDevice(advertisedDevice);
-      doConnect = true;
-      doScan = true;
-
-    }  // Found our server*/
     String deviceName = advertisedDevice.getName();  //uses device name over UUID. Saves time as does not need to check Service and then check the characteristics.
+    Serial.print("found: ");
+    Serial.println(deviceName);
+    Serial.flush();
+    
     if (deviceName == TRACKERNAME) {
       Serial.println("name match");
       BLEDevice::getScan()->stop();
@@ -62,8 +56,7 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
     } else {
       //Serial.println("device not found");
       notFound = true;
-      
     }
-    
+
   }  // onResult
 };   // MyAdvertisedDeviceCallbacks

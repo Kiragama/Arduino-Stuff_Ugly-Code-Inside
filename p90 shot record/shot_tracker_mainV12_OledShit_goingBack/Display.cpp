@@ -8,67 +8,64 @@ W_IR disIR;
 Use_EEPROM menee;
 
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////
 void Display_Stuff::loadTextNum(int8_t x, int8_t y, String lastVal, String newVal) {
   setCursor(x, y);  //Point is bottom left
 
-  setTextColor(backColor);
+  setTextColor(BACKCOLOUR);
   print(lastVal);
   setCursor(x, y);
 
-  setTextColor(textColor);
+  setTextColor(TEXTCOLOUR);
   print(newVal);  //can read but not write to ammo
 }
-////////////////////////////////////////////////////////////////////////////////////////
+
 void Display_Stuff::loadTextNum(int8_t x, int8_t y, int lastVal, int newVal) {
   setCursor(x, y);  //Point is bottom left
 
-  setTextColor(backColor);
+  setTextColor(BACKCOLOUR);
   print(lastVal);
   setCursor(x, y);
 
-  setTextColor(textColor);
+  setTextColor(TEXTCOLOUR);
   print(newVal);  //can read but not write to ammo
 }
-////////////////////////////////////////////////////////////////////////////////////////
+
 void Display_Stuff::printReload() {
-  fillScreen(backColor);
+  fillScreen(BACKCOLOUR);
   setCursor(30, 140);
   setTextSize(1);
   print(F("Reload"));  //signal to reload
-  setTextSize(textSize);
+  setTextSize(TEXTSIZE);
 }
 
 void Display_Stuff::printText(String text) {
-  fillScreen(backColor);
+  fillScreen(BACKCOLOUR);
   setCursor(30, 140);
   setTextSize(1);
   print(text);  //print value
-  setTextSize(textSize);
+  setTextSize(TEXTSIZE);
 }
 
-////////////////////////////////////////////////////////////////////////////////////////
+
 void Display_Stuff::printAmount() {  //print current mag count
   //check reload
   if (getammo() <= 0) {
     printReload();
   } else {
     setFont(&FreeSansBold24pt7b);
-    setTextSize(textSize);
+    setTextSize(TEXTSIZE);
     loadTextNum(30, 120, getlastammo(), getammo());  //prints text and overwrites last text
     setlastammo(getammo());
   }
 }
-////////////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////////////
+
+
 void Display_Stuff::clearInput() {  //if set to NULL then would be treated as 0
   setkeyPressed(9001);
 }
 
-////////////////////////////////////////////////////////////////////////////////////////
+
 int16_t Display_Stuff::setAmmo() {  //sets ammo
   bool clrBtn = true;
   delay(250);
@@ -78,15 +75,15 @@ int16_t Display_Stuff::setAmmo() {  //sets ammo
     int16_t input[sizeInput];
     int16_t mag = 0;
     int16_t count = 0;
-    fillScreen(getBackColor());  //clear
-    setTextColor(getTextColor());
+    fillScreen(BACKCOLOUR);  //clear
+    setTextColor(TEXTCOLOUR);
     setFont(&FreeSans12pt7b);
     setCursor(x, 30);
 
 
     print("Enter mag size");
     setCursor(x, height() - 40);  //50 from the bottom
-    drawFastHLine(x, height() - 25, width() - 70, getTextColor());
+    drawFastHLine(x, height() - 25, width() - 70, TEXTCOLOUR);
 
 
     while (clrBtn) {
@@ -103,11 +100,11 @@ int16_t Display_Stuff::setAmmo() {  //sets ammo
       {
         clrBtn = false;  //stops both loops so it can go back to main menu. Count set to 0 so things skipped
         count = 0;
-        fillScreen(getBackColor());
+        fillScreen(BACKCOLOUR);
       } else if (getkeyPressed() == 10)  //if clear pressed
       {
         count = 0;
-        fillScreen(getBackColor());
+        fillScreen(BACKCOLOUR);
         break;
 
         //clear btn. Let it loop through so the while loop starts again
@@ -127,7 +124,7 @@ int16_t Display_Stuff::setAmmo() {  //sets ammo
       //only works with a size of 2
 
       //Confirm Section
-      fillScreen(getBackColor());
+      fillScreen(BACKCOLOUR);
       setCursor(5, 20);
       setTextSize(1);
 
@@ -135,17 +132,17 @@ int16_t Display_Stuff::setAmmo() {  //sets ammo
       print(mag);
 
       delay(2000);                 //leave it on screen
-      fillScreen(getBackColor());  //clear screen
+      fillScreen(BACKCOLOUR);  //clear screen
       return mag;
     }
   }
   return 0;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////
+
 void Display_Stuff::initializeMenu() {  //create the menu list
-  fillScreen(getBackColor());
-  setTextColor(getTextColor());
+  fillScreen(BACKCOLOUR);
+  setTextColor(TEXTCOLOUR);
   setTextSize(1);
   setFont(&FreeSans9pt7b);
   setCursor(0, 0);
@@ -158,7 +155,6 @@ void Display_Stuff::initializeMenu() {  //create the menu list
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////
 
 void Display_Stuff::menu() {
   bool breakL = true;
@@ -169,7 +165,7 @@ void Display_Stuff::menu() {
     switch (getkeyPressed()) {
       case 0:  //break loop and menu
         breakL = false;
-        fillScreen(getBackColor());
+        fillScreen(BACKCOLOUR);
         break;
       case 1:
         setMag(setAmmo());  //sets resourcesetup mag to returned value of setAmmo function
@@ -193,4 +189,3 @@ void Display_Stuff::menu() {
     }
   }
 }
-////////////////////////////////////////////////////////////////////////////////////////_____

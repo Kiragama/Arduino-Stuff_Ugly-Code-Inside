@@ -5,16 +5,12 @@
 #include <BLEUtils.h>
 #include <BLEServer.h>
 
-#define EEPROM_SIZE 10  //bytes
-
-
+#include "Defines.h"
 #include "Use_EEPROM.h"
 #include "Display.h"
 #include "ResourceSetup.h"
 #include "W_IR.h"
 
-
-const int16_t chkReload = 10;  //records reloads when this is HIGH
 
 unsigned long last_time;
 
@@ -22,28 +18,32 @@ Display_Stuff inoDisplay;
 Use_EEPROM inoee;
 W_IR irUse;
 
-////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////START OF BLE5////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
-// See the following for generating UUIDs:
-// https://www.uuidgenerator.net/
-#define SERVICE_UUID "6bc38e09-5e61-4838-8d1b-f3e093a2c5e6"  //server advertises and as long as client has the same UUID and Characteristic UUID. Plenty of security holes here
-#define CHARACTERISTIC_UUID "b3286334-8358-4b98-9111-2b3cef9758c9"
 BLEServer* pServer = NULL;
 BLECharacteristic* pCharacteristic = NULL;
 BLEServerCallbacks* pServerCallbacks = NULL;
 bool deviceConnected = false;
 bool once = true;
+
+//FUNCTIONS
 void tickDown(int count) {
   for (int i = 0; i < count; i++) {
     inoDisplay.setammo(inoDisplay.getammo() - 1);  //reduce ammo by one per count
-    //Remember, it transmits in batches and not per shot.
     inoDisplay.printAmount();
     delay(10);  //so it appears to tick down
   }
 }
 
-//--Classes
+void IRAM_ATTR reload() {   //Reload being an interrupt is good as I can reload whenever
+  inoDisplay.fillScreen(BACKCOLOUR);
+  inoDisplay.setammo(inoDisplay.getMag());
+  inoDisplay.printAmount();
+  last_time = millis();  //reset sleep timer
+  once = true; //so triggering reload displays disconnected afterwards. If disconnected
+}
+//FUNCTIONS END
+
+
+//CLASSES
 class MyCallbacks : public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic* pCharacteristic) {
     String value = pCharacteristic->getValue();  //Allways gets value as string so better sending as one aswell
@@ -58,11 +58,6 @@ class MyCallbacks : public BLECharacteristicCallbacks {
 
       count += atol(tmp);  //conversion from char to float
       tickDown(count);
-      //inoDisplay.setammo(inoDisplay.getammo() - count);  //reduce ammo by the value of count.
-      //Remember, it transmits in batches and not per shot.
-      //inoDisplay.printAmount();
-      //Serial.print(count);
-      //Serial.println();
       last_time = millis();  //reset sleep timer
     }
   }
@@ -83,32 +78,13 @@ class MyServerCallback : public BLEServerCallbacks {
     Serial.println("start advertising");
   }
 };
-//--Classes End
-
-
-////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////// END OF BLE////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-void IRAM_ATTR reload() {
-  inoDisplay.fillScreen(inoDisplay.getBackColor());
-  inoDisplay.setammo(inoDisplay.getMag());
-  inoDisplay.printAmount();
-  //Reload being an interrupt is good as I can reload whenever
-  last_time = millis();  //reset sleep timer
-  once = true; //so triggering reload displays disconnected afterwards. If disconnected
-}
-
+//CLASSED END
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 void setup() {
   Serial.begin(9600);
-  ////////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////START OF BLE5////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////
+//BLE SETUP
   Serial.println("Starting BLE work!");
   //setup of server and creation of the BLE service on above UUID
   BLEDevice::init("Shot tracker Display");  //device name (char limit)
@@ -129,17 +105,15 @@ void setup() {
   //set recieved calls/values to corresponding classes. Only done as 2 classes as would not work as one class.
   pServer->setCallbacks(new MyServerCallback());
   pCharacteristic->setCallbacks(new MyCallbacks());
-  ////////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////// END OF BLE////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////
-
-
-  EEPROM.begin(EEPROM_SIZE);
+//END OF BLE SETUP
 
   Serial.println("setup start");
+  EEPROM.begin(EEPROM_SIZE);
+
+  
 
 
-  pinMode(chkReload, INPUT_PULLUP);
+  pinMode(RELOADPIN, INPUT_PULLUP);
   //gpio_deep_sleep_hold_en();  //hold the pinmode during sleep
 
   inoDisplay.begin();
@@ -159,22 +133,15 @@ void setup() {
   }
   Serial.print(inoDisplay.getMag());
   inoDisplay.setammo(inoDisplay.getMag());  //sets ammo variable to the temp of magazine
-  inoDisplay.fillScreen(inoDisplay.getBackColor());
+  inoDisplay.fillScreen(BACKCOLOUR);
   //create first screen
   inoDisplay.printAmount();
-  //Serial.println(inoDisplay.getammo());
-  //Serial.println(inoDisplay.getMag());
 
-  ////////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////Interupts////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////
-  attachInterrupt(digitalPinToInterrupt(chkReload), reload, RISING);
+
+//INTERRUPTS
+  attachInterrupt(digitalPinToInterrupt(RELOADPIN), reload, RISING);
   Serial.println("post interrupt setup");
 
-
-  ////////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////Interupts////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -200,7 +167,7 @@ void loop() {
     inoDisplay.printText("Connected");
     once = true;
     delay(3000);//delay to ensure a proper connection and stop back and forths during connection
-    inoDisplay.fillScreen(inoDisplay.getBackColor()); //blacks screen to clear text. print amount only replaces the text area
+    inoDisplay.fillScreen(BACKCOLOUR); //blacks screen to clear text. print amount only replaces the text area
     inoDisplay.printAmount();
   }
 

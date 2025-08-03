@@ -89,7 +89,7 @@ void setup() {
     isr();  //if woken from sleep, then call interrupt
   }
 
-  esp_deep_sleep_enable_gpio_wakeup(GPIO_NUM_1, ESP_GPIO_WAKEUP_GPIO_HIGH);  //I am unsure but the pin 0 is GPIO 0 but GPIO 1 triggers. Interrupt
+  //esp_deep_sleep_enable_gpio_wakeup(GPIO_NUM_1, ESP_GPIO_WAKEUP_GPIO_HIGH);  //I am unsure but the pin 0 is GPIO 0 but GPIO 1 triggers. Interrupt
 
   //_________________________________________Interrupts
 }

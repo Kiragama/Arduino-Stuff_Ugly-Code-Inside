@@ -1,15 +1,37 @@
 #pragma once
-#define PIN 18  
-#define WAKEPIN 35
-#define TRACKERNAME "Shot tracker Display"
+
+#define EEPROM_SIZE 10  //bytes
+#define TRACKERNAME "Shot tracker Display" //Determins which server it connects to. Only ever change this. DO NOT CHANGE SERVICE/CHARACTERISTICS UUIDS.
 #define uS_TO_S_FACTOR 1000000ULL  //Conversion factor for microseconds seconds to seconds. Used by Sleep timer
 #define mS_TO_S_FACTOR 1000ULL
-#define SLEEPTIME 120 //seconds
+#define SLEEPTIME 60 //seconds
 #define DELAYFACTOR 50 // 0.224 was recorded as less then the shot time. Because the sensor stays high for a while, this might be fine tunned to record single shots but if signal high for longer then threshold, it triggers interrupt again. It already does most of this, just need to tune this
+#define RANDADDRESS 0
+#define NAMEADDRESS 4
+#define PAIRTIMER 1
+#define DEFAULTP 1.23F
 
-#define USING_INTERRUPT false
-#define TRANSMIT false
+#define BATTERY_CHECK_INTERVAL 40000 //only used if using OMG
+
+#define USING_OMGS3 true
+#define USING_C3 false
+#define USING_INTERRUPT true
+#define TRANSMIT true
 #define SLEEPENABLED false
+#define PRINTING true
+
+
+
+#if USING_C3
+#define PIN 0  
+#define WAKEPIN 0
+#endif
+
+#if USING_OMGS3
+#define PIN 7  
+#define WAKEPIN 7
+#define PAIRBTN 12
+#endif
 
 unsigned volatile static long last_time;
 unsigned volatile static long last_transmit;
@@ -19,3 +41,9 @@ int32_t scancount = 0;
 bool serverconnecting = false;
 volatile int lockcounter = 0;
 
+unsigned long lastBatteryCheck = 0; //only used if using OMG
+int pairValue;
+bool isInPairMode = false;
+bool restartedInPairMode = false;
+int pairTime = 0;
+String disName;

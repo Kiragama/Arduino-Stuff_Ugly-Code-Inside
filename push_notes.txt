@@ -15,3 +15,16 @@ source: https://docs.gitlab.com/ee/tutorials/make_first_git_commit/
 ssh sources:https://docs.gitlab.com/ee/user/ssh.html
 
 Note: Must clone existing directory to add to it (For the first time only)
+
+
+
+COMMENTS BEST PRACTICES:
+https://www.conventionalcommits.org/en/v1.0.0/#summary
+Under summery and the numbered list. e.g. fix to be used when pushing a patch.
+
+
+This is useful because automated tools can use them for CI-CD. Good to get in the habbit of it. 
+Generally, you would add the tag followed by the comment, the tool will read that and do what the tag says.
+
+e.g. <version> <tag> <comment>
+all in the git commit -m "comment"

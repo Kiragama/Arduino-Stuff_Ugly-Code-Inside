@@ -1,6 +1,4 @@
-#ifndef W_IR_h
-#define W_IR_h
-
+#pragma once
 
 class W_IR {
 
@@ -10,12 +8,8 @@ public:
   int getRemote(int i) {
     return remote[i];
   }
-  int getIrPin() {
-    return irPin;
-  }
 
 protected:
-  const int irPin = 3;
   const int remote[20] = {
     0x16,  //zero 0
     0xC,   //one 1
@@ -42,5 +36,3 @@ protected:
 
 
 extern W_IR irUse;
-
-#endif

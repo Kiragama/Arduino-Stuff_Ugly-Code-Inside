@@ -1,5 +1,4 @@
-#ifndef Use_EEPROM_h
-#define Use_EEPROM_h
+#pragma once
 
 
 #include <EEPROM.h>
@@ -19,5 +18,3 @@ private:
 };
 
 
-
-#endif

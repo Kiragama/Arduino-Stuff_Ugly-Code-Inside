@@ -1,10 +1,4 @@
-
-
 #include "Use_EEPROM.h"
-
-
-
-
 
 void Use_EEPROM::saveEE(float mag) {  //save magazine to an address in EEPROM
   //eeAddress += sizeof(float); //Move address to the next byte after previous entry.

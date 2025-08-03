@@ -11,7 +11,7 @@ Display_Stuff irdisplay;
 
 
 W_IR::W_IR() {
-  IrReceiver.begin(irPin);
+  IrReceiver.begin(IRPIN);
 }
 
 

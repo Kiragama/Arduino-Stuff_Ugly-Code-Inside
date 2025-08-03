@@ -1,17 +1,9 @@
-#include "Defines.h"
+//#include "Defines.h"
+#include <WiFi.h>
+#include "driver/adc.h"
 
-void disable_wifi() {               //CHATGPT CREATED
-  esp_err_t err = esp_wifi_stop();  // Stop Wi-Fi
-  if (err == ESP_OK) {
-    printf("Wi-Fi disabled successfully\n");
-  } else {
-    printf("Failed to disable Wi-Fi\n");
-  }
-
-  err = esp_wifi_deinit();  // Deinitialize Wi-Fi
-  if (err == ESP_OK) {
-    printf("Wi-Fi deinitialized successfully\n");
-  } else {
-    printf("Failed to deinitialize Wi-Fi\n");
-  }
+void disable_wifi() {               //CHATGPT CREATED  
+  WiFi.disconnect(true);  // Disconnect from the network
+  WiFi.mode(WIFI_OFF);    // Switch WiFi off
+  //measured power is 67mA with this off and 172mA with this code removed
 }

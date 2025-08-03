@@ -139,7 +139,7 @@ void loop() {
     if (scancount >= 5) {
       scancount = 0;  //catch so if no server, it goes to sleep after 5 attempts.
       loopcount = 0;
-      sleepLight((last_time + (SLEEPTIME * mS_TO_S_FACTOR), count);
+      sleepLight((last_time + (SLEEPTIME * mS_TO_S_FACTOR)), count);
       //ESP.restart();  //Restart device. Loses the stored value but allow for more reliable reconnect to the Py shot tracker.
     } else {
       doConnect = true;

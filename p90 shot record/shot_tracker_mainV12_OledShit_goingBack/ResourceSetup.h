@@ -1,6 +1,4 @@
-#ifndef ResourceSetup_h
-#define ResourceSetup_h
-
+#pragma once
 
 
 class Resources_Base {
@@ -40,7 +38,3 @@ public:
   
 };
 
-
-
-
-#endif
